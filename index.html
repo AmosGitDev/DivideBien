@@ -421,7 +421,8 @@
 // ════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════
-let cfg = { nameYo:'Tú', nameElla:'Pareja', pctYo:60, scriptUrl:'', passwordHash:'' };
+const DEFAULT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzRphrRFazoXgMpfADTtaMfoPJ16WJ8SiPtKk-_6RAjDXrxtJAjd31s97Yg7RDYc4fE/exec';
+let cfg={nameYo:'Tú',nameElla:'Pareja',pctYo:60,scriptUrl:DEFAULT_SCRIPT_URL,passwordHash:''};
 // db[YYYY-MM] = { items:[...], closed:false }
 let db = {};
 let currentYear, currentMonth, activeFilter = 'todos';
@@ -475,8 +476,10 @@ function init() {
   checkLock();
   render();
   renderHistory();
-  if (!cfg.scriptUrl) document.getElementById('setupBanner').classList.remove('hidden');
-  else { document.getElementById('setupBanner').classList.add('hidden'); syncFromRemote(); }
+  if (cfg.scriptUrl) {
+    document.getElementById('setupBanner').classList.add('hidden');
+    syncFromRemote();
+  }
 }
 
 // ════════════════════════════════════════════
@@ -522,6 +525,8 @@ function loadLocal() {
     const c = localStorage.getItem('cfg_v2');
     if (d) db  = JSON.parse(d);
     if (c) cfg = { ...cfg, ...JSON.parse(c) };
+    // Always ensure scriptUrl is set
+    if (!cfg.scriptUrl) cfg.scriptUrl = DEFAULT_SCRIPT_URL;
     // Migrate old format
     const old = localStorage.getItem('db_gastos');
     if (old && !d) {
