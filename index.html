@@ -346,8 +346,8 @@
       <div class="form-group">
         <label>Pagado por</label>
         <select id="payer">
-          <option value="yo">Tú</option>
-          <option value="ella">Pareja</option>
+          <option value="yo" id="payerOptYo">Tú</option>
+          <option value="ella" id="payerOptElla">Pareja</option>
           <option value="mitad">Mitad cada uno</option>
         </select>
       </div>
@@ -405,8 +405,8 @@
       <div class="form-group">
         <label>Pagado por</label>
         <select id="editPayer">
-          <option value="yo">Tú</option>
-          <option value="ella">Pareja</option>
+          <option value="yo" id="editPayerOptYo">Tú</option>
+          <option value="ella" id="editPayerOptElla">Pareja</option>
           <option value="mitad">Mitad cada uno</option>
         </select>
       </div>
@@ -470,6 +470,7 @@ function init() {
   currentMonth = now.getMonth();
   document.getElementById('date').value = toDateStr(now);
   loadLocal();
+  updatePayerOptions();
   bindEvents();
   checkLock();
   render();
@@ -500,6 +501,12 @@ function fmt(n) {
 }
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function updatePayerOptions() {
+  document.getElementById('payerOptYo').textContent    = cfg.nameYo;
+  document.getElementById('payerOptElla').textContent  = cfg.nameElla;
+  document.getElementById('editPayerOptYo').textContent   = cfg.nameYo;
+  document.getElementById('editPayerOptElla').textContent = cfg.nameElla;
 }
 
 // ════════════════════════════════════════════
@@ -840,6 +847,7 @@ function bindEvents() {
     const newPass = document.getElementById('cfgPassword').value;
     if (newPass) cfg.passwordHash = simpleHash(newPass);
     saveLocal();
+    updatePayerOptions();
     document.getElementById('settingsModal').classList.remove('open');
     render(); renderHistory(); toast('Configuración guardada ✓');
     if (cfg.scriptUrl) { document.getElementById('setupBanner').classList.add('hidden'); syncFromRemote(); }
