@@ -530,19 +530,28 @@ function launchApp() {
 //  LOCK
 // ══════════════════════════════════════════════
 function checkLock() {
-  if (localStorage.getItem('unlocked') === '1') { afterUnlock(); return; }
+  if (getCookie('unlocked') === '1') { afterUnlock(); return; }
   document.getElementById('lockScreen').classList.add('visible');
 }
 function unlock() {
   document.getElementById('lockScreen').classList.remove('visible');
-  localStorage.setItem('unlocked','1');
+  setCookie('unlocked', '1', 365);
   afterUnlock();
 }
 function lock() {
-  localStorage.removeItem('unlocked');
+  setCookie('unlocked', '', -1);
   document.getElementById('pinInput').value = '';
   document.getElementById('pinError').textContent = '';
   document.getElementById('lockScreen').classList.add('visible');
+}
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days*24*60*60*1000);
+  document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=Strict`;
+}
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : null;
 }
 
 // ══════════════════════════════════════════════
@@ -971,7 +980,7 @@ function bindEvents() {
     const np = document.getElementById('cfgPassword').value;
     if (np) {
       shared.passwordHash = simpleHash(np);
-      localStorage.removeItem('unlocked'); // fuerza re-autenticación en todos
+      setCookie('unlocked', '', -1); // fuerza re-autenticación en todos
     }
     saveLocal();
     push({ action:'updateShared', shared });
