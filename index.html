@@ -938,7 +938,7 @@ function bindEvents() {
   });
 
   // Settings
-  function roundTo5(pct) { return Math.round(pct / 5) * 5; }
+  function roundTo5(pct) { return Math.round(pct / 2.5) * 2.5; }
   function calcPctFromSalaries(salAmos, salAngela) {
     const total = salAmos + salAngela;
     if (total <= 0) return 60;
