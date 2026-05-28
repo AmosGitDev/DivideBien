@@ -15,36 +15,53 @@
     html{font-size:15px}
     body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-    /* ── LOCK SCREEN ── */
-    #lockScreen {
+    /* ── FULLSCREEN SCREENS (lock / who) ── */
+    .fullscreen {
       display:none; position:fixed; inset:0; z-index:1000;
       background:var(--bg); align-items:center; justify-content:center;
     }
-    #lockScreen.visible { display:flex; }
-    .lock-box {
+    .fullscreen.visible { display:flex; }
+    .screen-box {
       background:var(--surface); border:1px solid var(--border);
       border-radius:var(--radius); padding:2.5rem 2rem;
-      width:min(360px,90vw); text-align:center;
+      width:min(380px,92vw); text-align:center;
       box-shadow:0 8px 48px rgba(0,0,0,.12);
     }
-    .lock-box .lock-icon { font-size:2.2rem; margin-bottom:1rem; }
-    .lock-box h2 { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.4rem; }
-    .lock-box p  { font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; }
-    .lock-box input {
+    .screen-box .screen-icon { font-size:2.2rem; margin-bottom:1rem; }
+    .screen-box h2 { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:.4rem; }
+    .screen-box p  { font-size:.83rem; color:var(--muted); margin-bottom:1.75rem; line-height:1.5; }
+    /* PIN input */
+    .screen-box input[type=password] {
       width:100%; border:1px solid var(--border); border-radius:8px;
-      padding:.65rem 1rem; font-size:1rem; font-family:'DM Sans',sans-serif;
+      padding:.7rem 1rem; font-size:1rem; font-family:'DM Sans',sans-serif;
       background:var(--bg); color:var(--text); outline:none; text-align:center;
       letter-spacing:.2em; margin-bottom:.75rem; transition:border-color .15s;
     }
-    .lock-box input:focus { border-color:var(--accent); }
-    .lock-box .lock-btn {
-      width:100%; background:var(--accent); color:#fff; border:none;
-      border-radius:8px; padding:.65rem; font-size:.9rem;
-      font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer;
-      transition:opacity .15s;
+    .screen-box input[type=password]:focus { border-color:var(--accent); }
+    .screen-error { color:var(--red); font-size:.8rem; margin-top:.4rem; min-height:1.2em; }
+    /* Who-are-you buttons */
+    .who-btns { display:flex; flex-direction:column; gap:.75rem; }
+    .who-btn {
+      background:var(--surface); border:2px solid var(--border); border-radius:10px;
+      padding:1rem 1.25rem; font-size:1rem; font-family:'Playfair Display',serif;
+      font-weight:600; cursor:pointer; transition:all .2s; color:var(--text);
+      display:flex; align-items:center; gap:.75rem;
     }
-    .lock-box .lock-btn:hover { opacity:.88; }
-    .lock-error { color:var(--red); font-size:.8rem; margin-top:.5rem; min-height:1.2em; }
+    .who-btn:hover { border-color:var(--accent); background:var(--accent-lt); }
+    .who-btn .who-avatar {
+      width:38px; height:38px; border-radius:50%; background:var(--accent-lt);
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;
+    }
+    .who-btn .who-info { text-align:left; }
+    .who-btn .who-name { font-size:.95rem; font-weight:600; }
+    .who-btn .who-pct  { font-size:.75rem; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400; }
+    .screen-btn {
+      width:100%; background:var(--accent); color:#fff; border:none;
+      border-radius:8px; padding:.7rem; font-size:.9rem;
+      font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer;
+      transition:opacity .15s; margin-top:.25rem;
+    }
+    .screen-btn:hover { opacity:.88; }
 
     /* ── HEADER ── */
     header {
@@ -57,7 +74,12 @@
       letter-spacing:-.01em; color:var(--text); display:flex; align-items:center; gap:.5rem;
     }
     .logo span { color:var(--accent); }
-    .header-actions { display:flex; gap:.75rem; align-items:center; }
+    .header-right { display:flex; gap:.75rem; align-items:center; }
+    .who-chip {
+      background:var(--accent-lt); color:var(--accent); border:none;
+      border-radius:99px; padding:.3rem .85rem; font-size:.78rem;
+      font-family:'DM Sans',sans-serif; font-weight:600; cursor:default;
+    }
     .hdr-btn {
       background:none; border:1px solid var(--border); border-radius:8px;
       padding:.4rem .85rem; font-size:.8rem; font-family:'DM Sans',sans-serif;
@@ -162,7 +184,6 @@
     }
     .expense-btn:hover { border-color:var(--accent); color:var(--accent); }
     .expense-btn.del:hover { border-color:var(--red); color:var(--red); }
-
     .empty-state {
       text-align:center; padding:3rem 1rem; color:var(--muted); font-size:.9rem;
       border:1px dashed var(--border); border-radius:var(--radius); background:var(--surface);
@@ -196,21 +217,21 @@
     .modal-backdrop.open { display:flex; }
     .modal {
       background:var(--surface); border-radius:var(--radius); padding:2rem;
-      width:min(480px,90vw); max-height:85vh; overflow-y:auto;
+      width:min(480px,92vw); max-height:88vh; overflow-y:auto;
       box-shadow:0 8px 48px rgba(0,0,0,.18); animation:modalIn .2s ease;
     }
     @keyframes modalIn { from{opacity:0;transform:translateY(20px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
     .modal h2 { font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:1.25rem; }
     .modal-close { float:right; background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--muted); margin-top:-.2rem; }
-    .settings-row { display:flex; align-items:center; justify-content:space-between; padding:.75rem 0; border-bottom:1px solid var(--border); }
+    .settings-row { display:flex; align-items:center; justify-content:space-between; padding:.75rem 0; border-bottom:1px solid var(--border); gap:1rem; }
     .settings-row:last-of-type { border-bottom:none; }
-    .settings-row label { font-size:.85rem; font-weight:500; }
-    .settings-row input {
+    .settings-row label { font-size:.85rem; font-weight:500; flex-shrink:0; }
+    .settings-row input, .settings-row select {
       border:1px solid var(--border); border-radius:7px; padding:.4rem .7rem;
       font-size:.85rem; font-family:'DM Sans',sans-serif; width:200px;
       background:var(--bg); outline:none; color:var(--text);
     }
-    .settings-row input:focus { border-color:var(--accent); }
+    .settings-row input:focus, .settings-row select:focus { border-color:var(--accent); }
     .btn-save {
       background:var(--accent); color:#fff; border:none; border-radius:8px;
       padding:.6rem 1.5rem; font-size:.88rem; font-family:'DM Sans',sans-serif;
@@ -218,17 +239,9 @@
     }
     .btn-save:hover { opacity:.88; }
     .edit-form { display:flex; flex-direction:column; gap:.9rem; }
-
-    /* ── SETUP BANNER ── */
-    #setupBanner {
-      background:#fffbeb; border:1px solid #fde68a; border-radius:var(--radius);
-      padding:1rem 1.25rem; margin-bottom:1.75rem; display:flex; align-items:center; gap:.75rem; font-size:.85rem;
-    }
-    #setupBanner.hidden { display:none; }
-    #setupBannerBtn {
-      margin-left:auto; background:var(--accent); color:#fff; border:none;
-      border-radius:7px; padding:.35rem .9rem; font-size:.8rem;
-      font-family:'DM Sans',sans-serif; cursor:pointer; white-space:nowrap;
+    .settings-note {
+      margin-top:1rem; padding:.85rem 1rem; background:var(--bg);
+      border-radius:8px; font-size:.78rem; color:var(--muted); line-height:1.6;
     }
 
     /* ── TOAST ── */
@@ -248,40 +261,62 @@
       main{padding:1.25rem 1rem 3rem}
       .close-month-bar{flex-direction:column;align-items:flex-start}
       .expense-actions{flex-direction:column}
+      .header-right .who-chip { display:none }
     }
   </style>
 </head>
 <body>
 
-<!-- LOCK SCREEN -->
-<div id="lockScreen" class="visible">
-  <div class="lock-box">
-    <div class="lock-icon">🔒</div>
+<!-- ── LOCK SCREEN ── -->
+<div id="lockScreen" class="fullscreen visible">
+  <div class="screen-box">
+    <div class="screen-icon">🔒</div>
     <h2>DivideBien</h2>
     <p>Introduce la contraseña para acceder</p>
     <input type="password" id="pinInput" placeholder="••••••" maxlength="30" />
-    <button class="lock-btn" id="pinBtn">Entrar</button>
-    <div class="lock-error" id="pinError"></div>
+    <button class="screen-btn" id="pinBtn">Entrar</button>
+    <div class="screen-error" id="pinError"></div>
   </div>
 </div>
 
-<!-- HEADER -->
+<!-- ── WHO ARE YOU SCREEN ── -->
+<div id="whoScreen" class="fullscreen">
+  <div class="screen-box">
+    <div class="screen-icon">👋</div>
+    <h2>¿Quién eres?</h2>
+    <p>Elige tu perfil. Solo se pregunta una vez en este dispositivo.</p>
+    <div class="who-btns">
+      <button class="who-btn" id="whoAmos">
+        <div class="who-avatar">👨</div>
+        <div class="who-info">
+          <div class="who-name">Amós</div>
+          <div class="who-pct" id="whoAmosPct">Asume el 60% de los gastos</div>
+        </div>
+      </button>
+      <button class="who-btn" id="whoAngela">
+        <div class="who-avatar">👩</div>
+        <div class="who-info">
+          <div class="who-name">Ángela</div>
+          <div class="who-pct" id="whoAngelaPct">Asume el 40% de los gastos</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
 <header>
   <div class="logo">💸 <span>Divide</span>Bien</div>
-  <div class="header-actions">
+  <div class="header-right">
+    <span class="who-chip" id="whoChip">Amós</span>
     <button class="hdr-btn" id="lockBtn">🔒 Bloquear</button>
     <button class="hdr-btn" id="settingsBtn">⚙ Ajustes</button>
   </div>
 </header>
 
 <main>
-  <div id="setupBanner">
-    ⚠️ <span><strong>Conecta Google Sheets</strong> para guardar datos permanentemente.</span>
-    <button id="setupBannerBtn">Configurar ahora</button>
-  </div>
-
   <div class="month-bar">
-    <h2 id="monthTitle">Mayo 2026 <span id="closedBadge" class="closed-badge" style="display:none">✓ Cerrado</span></h2>
+    <h2 id="monthTitle">— <span id="closedBadge" class="closed-badge" style="display:none">✓ Cerrado</span></h2>
     <div class="month-nav">
       <button id="prevMonth">‹</button>
       <button id="nextMonth">›</button>
@@ -295,17 +330,17 @@
       <div class="card-sub"  id="numGastos">0 gastos</div>
     </div>
     <div class="card">
-      <div class="card-label">Tu parte (<span id="pctYo">60</span>%)</div>
+      <div class="card-label" id="labelYo">Tu parte</div>
       <div class="card-value" id="parteYo">0,00 €</div>
       <div class="card-sub"  id="pagoYo">Pagado: 0,00 €</div>
     </div>
     <div class="card">
-      <div class="card-label">Su parte (<span id="pctElla">40</span>%)</div>
+      <div class="card-label" id="labelElla">Su parte</div>
       <div class="card-value" id="parteElla">0,00 €</div>
       <div class="card-sub"  id="pagoElla">Pagado: 0,00 €</div>
     </div>
     <div class="card highlight">
-      <div class="card-label">Ella te debe</div>
+      <div class="card-label" id="deudaLabel">Balance</div>
       <div class="card-value" id="deuda">0,00 €</div>
       <div class="card-sub"  id="deudaSub">Al corriente</div>
     </div>
@@ -320,8 +355,8 @@
       <div class="split-bar-fill" id="splitFill" style="width:60%"></div>
     </div>
     <div class="split-bar-names">
-      <span id="nameYo"   style="color:var(--accent);font-weight:500;">Tú</span>
-      <span id="nameElla" style="color:var(--muted);">Pareja</span>
+      <span style="color:var(--accent);font-weight:500;">Amós</span>
+      <span style="color:var(--muted);">Ángela</span>
     </div>
   </div>
 
@@ -346,8 +381,8 @@
       <div class="form-group">
         <label>Pagado por</label>
         <select id="payer">
-          <option value="yo" id="payerOptYo">Tú</option>
-          <option value="ella" id="payerOptElla">Pareja</option>
+          <option value="amos">Amós</option>
+          <option value="angela">Ángela</option>
           <option value="mitad">Mitad cada uno</option>
         </select>
       </div>
@@ -372,14 +407,27 @@
   <div class="modal">
     <button class="modal-close" id="closeSettings">✕</button>
     <h2>Configuración</h2>
-    <div class="settings-row"><label>Tu nombre</label><input type="text" id="cfgNameYo" /></div>
-    <div class="settings-row"><label>Nombre de tu pareja</label><input type="text" id="cfgNameElla" /></div>
-    <div class="settings-row"><label>Tu porcentaje (%)</label><input type="number" id="cfgPctYo" min="1" max="99" /></div>
-    <div class="settings-row"><label>Contraseña de acceso</label><input type="password" id="cfgPassword" placeholder="Sin cambios" /></div>
-    <div class="settings-row"><label>Google Apps Script URL</label><input type="url" id="cfgScriptUrl" placeholder="https://script.google.com/…" /></div>
-    <button class="btn-save" id="saveSettings">Guardar configuración</button>
-    <div style="margin-top:1.25rem;padding:1rem;background:var(--bg);border-radius:8px;font-size:.78rem;color:var(--muted);line-height:1.6;">
-      <strong style="color:var(--text);">Contraseña:</strong> se guarda localmente en cada dispositivo. Compártela con tu pareja para que pueda entrar.
+    <div class="settings-row">
+      <label>Sueldo de Amós (€)</label>
+      <input type="number" id="cfgSalAmos" min="0" step="100" placeholder="Ej. 2000" />
+    </div>
+    <div class="settings-row">
+      <label>Sueldo de Ángela (€)</label>
+      <input type="number" id="cfgSalAngela" min="0" step="100" placeholder="Ej. 1400" />
+    </div>
+    <div style="padding:.75rem 0; border-bottom:1px solid var(--border);">
+      <div style="font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">Reparto calculado</div>
+      <div id="pctPreview" style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--accent);">— % · — %</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem;">Amós · Ángela — redondeado al 5% más cercano</div>
+    </div>
+    <div class="settings-row">
+      <label>Contraseña de acceso</label>
+      <input type="password" id="cfgPassword" placeholder="Sin cambios" />
+    </div>
+    <button class="btn-save" id="saveSettings">Guardar</button>
+    <div class="settings-note">
+      Introduce los sueldos netos mensuales y el reparto se calcula automáticamente, redondeado al 5% más cercano.<br>
+      Los cambios se sincronizan en ambos dispositivos.
     </div>
   </div>
 </div>
@@ -405,8 +453,8 @@
       <div class="form-group">
         <label>Pagado por</label>
         <select id="editPayer">
-          <option value="yo" id="editPayerOptYo">Tú</option>
-          <option value="ella" id="editPayerOptElla">Pareja</option>
+          <option value="amos">Amós</option>
+          <option value="angela">Ángela</option>
           <option value="mitad">Mitad cada uno</option>
         </select>
       </div>
@@ -418,44 +466,78 @@
 <div id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════
+const SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbzRphrRFazoXgMpfADTtaMfoPJ16WJ8SiPtKk-_6RAjDXrxtJAjd31s97Yg7RDYc4fE/exec';
+const DEFAULT_PASS = '-co82g'; // hash of "grazalema123"
+const MONTHS_ES    = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// ══════════════════════════════════════════════
 //  STATE
-// ════════════════════════════════════════════
-const DEFAULT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzRphrRFazoXgMpfADTtaMfoPJ16WJ8SiPtKk-_6RAjDXrxtJAjd31s97Yg7RDYc4fE/exec';
-const DEFAULT_PASSWORD_HASH='-co82g';
-let cfg={nameYo:'Tú',nameElla:'Pareja',pctYo:60,scriptUrl:DEFAULT_SCRIPT_URL,passwordHash:DEFAULT_PASSWORD_HASH};
+// ══════════════════════════════════════════════
+// Shared config (synced via Sheets): just pctAmos and passwordHash
+let shared = { pctAmos: 60, passwordHash: DEFAULT_PASS };
+
+// Device-local: who is using this device ('amos' | 'angela' | null)
+let whoAmI = localStorage.getItem('whoAmI') || null;
+
 // db[YYYY-MM] = { items:[...], closed:false }
 let db = {};
-let currentYear, currentMonth, activeFilter = 'todos';
-const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-// ════════════════════════════════════════════
-//  SIMPLE HASH (not cryptographic, just obfuscation)
-// ════════════════════════════════════════════
-function simpleHash(str) {
+let currentYear, currentMonth, activeFilter = 'todos';
+
+// ══════════════════════════════════════════════
+//  HASH
+// ══════════════════════════════════════════════
+function simpleHash(s) {
   let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-  }
+  for (let i = 0; i < s.length; i++) h = Math.imul(31,h) + s.charCodeAt(i) | 0;
   return h.toString(36);
 }
 
-// ════════════════════════════════════════════
-//  LOCK SCREEN
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+function init() {
+  const now = new Date();
+  currentYear  = now.getFullYear();
+  currentMonth = now.getMonth();
+  document.getElementById('date').value = toDateStr(now);
+  loadLocal();
+  bindEvents();
+  // Step 1: password
+  checkLock();
+}
+
+function afterUnlock() {
+  // Step 2: who are you (if not set)
+  if (!whoAmI) {
+    showWhoScreen();
+  } else {
+    launchApp();
+  }
+}
+
+function launchApp() {
+  document.getElementById('whoScreen').classList.remove('visible');
+  render();
+  renderHistory();
+  syncFromRemote();
+}
+
+// ══════════════════════════════════════════════
+//  LOCK
+// ══════════════════════════════════════════════
 function checkLock() {
-  // If no password set, skip lock
-  if (!cfg.passwordHash) { unlock(); return; }
-  // If already unlocked this session
-  if (sessionStorage.getItem('unlocked') === '1') { unlock(); return; }
+  if (sessionStorage.getItem('unlocked') === '1') { afterUnlock(); return; }
   document.getElementById('lockScreen').classList.add('visible');
 }
-
 function unlock() {
   document.getElementById('lockScreen').classList.remove('visible');
-  sessionStorage.setItem('unlocked', '1');
+  sessionStorage.setItem('unlocked','1');
+  afterUnlock();
 }
-
 function lock() {
   sessionStorage.removeItem('unlocked');
   document.getElementById('pinInput').value = '';
@@ -463,195 +545,204 @@ function lock() {
   document.getElementById('lockScreen').classList.add('visible');
 }
 
-// ════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════
-function init() {
-  const now = new Date();
-  currentYear  = now.getFullYear();
-  currentMonth = now.getMonth();
-  document.getElementById('date').value = toDateStr(now);
-  loadLocal();
-  updatePayerOptions();
-  bindEvents();
-  checkLock();
-  render();
-  renderHistory();
-  if (cfg.scriptUrl) {
-    document.getElementById('setupBanner').classList.add('hidden');
-    syncFromRemote();
-  }
+// ══════════════════════════════════════════════
+//  WHO SCREEN
+// ══════════════════════════════════════════════
+function showWhoScreen() {
+  // Update percentages shown
+  document.getElementById('whoAmosPct').textContent   = `Asume el ${shared.pctAmos}% de los gastos`;
+  document.getElementById('whoAngelaPct').textContent = `Asume el ${100-shared.pctAmos}% de los gastos`;
+  document.getElementById('whoScreen').classList.add('visible');
+}
+function chooseWho(who) {
+  whoAmI = who;
+  localStorage.setItem('whoAmI', who);
+  document.getElementById('whoScreen').classList.remove('visible');
+  launchApp();
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  HELPERS
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function toDateStr(d) {
-  // Local date string, avoids UTC offset bug
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function monthKey(y, m) {
-  return `${y??currentYear}-${String((m??currentMonth)+1).padStart(2,'0')}`;
-}
-function currentKey() { return monthKey(currentYear, currentMonth); }
-function getMonthData(key) {
-  if (!db[key]) db[key] = { items:[], closed:false };
-  return db[key];
-}
+function mKey(y,m) { return `${y??currentYear}-${String((m??currentMonth)+1).padStart(2,'0')}`; }
+function currentKey() { return mKey(currentYear, currentMonth); }
+function getMonthData(key) { if(!db[key]) db[key]={items:[],closed:false}; return db[key]; }
 function currentItems() { return getMonthData(currentKey()).items; }
 function isClosed()     { return !!getMonthData(currentKey()).closed; }
-function fmt(n) {
-  return (isNaN(n)?0:n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
-}
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function updatePayerOptions() {
-  document.getElementById('payerOptYo').textContent    = cfg.nameYo;
-  document.getElementById('payerOptElla').textContent  = cfg.nameElla;
-  document.getElementById('editPayerOptYo').textContent   = cfg.nameYo;
-  document.getElementById('editPayerOptElla').textContent = cfg.nameElla;
-}
+function fmt(n) { return (isNaN(n)?0:n).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  PERSPECTIVE: from whoAmI's point of view
+//  "yo" = whoAmI, "ella" = the other one
+// ══════════════════════════════════════════════
+function myName()    { return whoAmI==='amos' ? 'Amós' : 'Ángela'; }
+function otherName() { return whoAmI==='amos' ? 'Ángela' : 'Amós'; }
+function myPct()     { return whoAmI==='amos' ? shared.pctAmos : 100-shared.pctAmos; }
+function otherPct()  { return 100 - myPct(); }
+// payer values in DB are 'amos' / 'angela' / 'mitad'
+function myKey()     { return whoAmI; }   // 'amos' or 'angela'
+function otherKey()  { return whoAmI==='amos' ? 'angela' : 'amos'; }
+
+// ══════════════════════════════════════════════
 //  PERSISTENCE
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function saveLocal() {
-  localStorage.setItem('db_v2',  JSON.stringify(db));
-  localStorage.setItem('cfg_v2', JSON.stringify(cfg));
+  localStorage.setItem('db_v3',     JSON.stringify(db));
+  localStorage.setItem('shared_v3', JSON.stringify(shared));
 }
 function loadLocal() {
   try {
-    const d = localStorage.getItem('db_v2');
-    const c = localStorage.getItem('cfg_v2');
-    if (d) db  = JSON.parse(d);
-    if (c) cfg = { ...cfg, ...JSON.parse(c) };
-    if (!cfg.scriptUrl) cfg.scriptUrl = DEFAULT_SCRIPT_URL;
-    if (!cfg.passwordHash) cfg.passwordHash = DEFAULT_PASSWORD_HASH;
-    // Migrate old format
-    const old = localStorage.getItem('db_gastos');
+    const d = localStorage.getItem('db_v3');
+    const s = localStorage.getItem('shared_v3');
+    if (d) db     = JSON.parse(d);
+    if (s) shared = { ...shared, ...JSON.parse(s) };
+    if (!shared.passwordHash) shared.passwordHash = DEFAULT_PASS;
+
+    // Migrate old db_v2 (payer was 'yo'/'ella', now 'amos'/'angela')
+    // We can't migrate without knowing who set it up, so just import as-is
+    // and map 'yo'->'amos', 'ella'->'angela' since Amos set up the original
+    const old = localStorage.getItem('db_v2');
     if (old && !d) {
       const o = JSON.parse(old);
       for (const [k,v] of Object.entries(o)) {
-        if (Array.isArray(v)) db[k] = { items:v, closed:false };
+        const items = (v.items||v||[]).map(g => ({
+          ...g,
+          payer: g.payer==='yo' ? 'amos' : g.payer==='ella' ? 'angela' : g.payer==='mitad' ? 'mitad' : g.payer
+        }));
+        db[k] = { items, closed: v.closed||false };
       }
       saveLocal();
     }
   } catch(e) {}
 }
 
-// ════════════════════════════════════════════
-//  GOOGLE SHEETS SYNC
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  REMOTE SYNC
+// ══════════════════════════════════════════════
 async function syncFromRemote() {
-  if (!cfg.scriptUrl) return;
   try {
-    const res  = await fetch(cfg.scriptUrl + '?action=getAll');
+    const res  = await fetch(SCRIPT_URL + '?action=getAll');
     const data = await res.json();
-    if (data.db) { db = data.db; saveLocal(); render(); renderHistory(); }
+    if (data.db) {
+      db = data.db;
+      if (data.shared) shared = { ...shared, ...data.shared };
+      saveLocal(); render(); renderHistory();
+    }
   } catch(e) { console.warn('Sync failed', e); }
 }
-async function pushToRemote(payload) {
-  if (!cfg.scriptUrl) return;
+async function push(payload) {
   try {
-    await fetch(cfg.scriptUrl, {
+    await fetch(SCRIPT_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload), mode:'no-cors'
     });
   } catch(e) {}
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  DATA MUTATIONS
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function addGasto(g) {
-  const key = g.date.slice(0,7);
-  getMonthData(key).items.push(g);
-  saveLocal();
-  pushToRemote({ action:'add', gasto:g });
+  getMonthData(g.date.slice(0,7)).items.push(g);
+  saveLocal(); push({ action:'add', gasto:g });
 }
 function deleteGasto(id) {
-  for (const key of Object.keys(db)) {
-    const data = getMonthData(key);
-    const prev = data.items.length;
-    data.items = data.items.filter(g => String(g.id) !== String(id));
-    if (data.items.length !== prev) break;
+  for (const k of Object.keys(db)) {
+    const data = getMonthData(k), prev = data.items.length;
+    data.items = data.items.filter(g=>String(g.id)!==String(id));
+    if (data.items.length!==prev) break;
   }
-  saveLocal();
-  pushToRemote({ action:'delete', id });
+  saveLocal(); push({ action:'delete', id });
 }
 function editGasto(id, changes) {
-  for (const key of Object.keys(db)) {
-    const data = getMonthData(key);
-    const idx  = data.items.findIndex(g => String(g.id) === String(id));
-    if (idx >= 0) {
-      data.items[idx] = { ...data.items[idx], ...changes };
-      saveLocal();
-      pushToRemote({ action:'edit', id, changes });
-      return;
-    }
+  for (const k of Object.keys(db)) {
+    const data = getMonthData(k);
+    const idx  = data.items.findIndex(g=>String(g.id)===String(id));
+    if (idx>=0) { data.items[idx]={...data.items[idx],...changes}; saveLocal(); push({action:'edit',id,changes}); return; }
   }
 }
 function closeMonth() {
   getMonthData(currentKey()).closed = true;
-  saveLocal();
-  pushToRemote({ action:'closeMonth', key:currentKey() });
-  render(); renderHistory();
-  toast('Mes cerrado y archivado ✓');
+  saveLocal(); push({ action:'closeMonth', key:currentKey() });
+  render(); renderHistory(); toast('Mes cerrado y archivado ✓');
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  CALCULATIONS
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function calcSummary(items) {
-  const pct = cfg.pctYo / 100;
-  let tYo = 0, tElla = 0;
+  const pctAmos = shared.pctAmos / 100;
+  let tAmos = 0, tAngela = 0;
   for (const g of items) {
     const a = Number(g.amount)||0;
-    if (g.payer==='yo')    tYo   += a;
-    if (g.payer==='ella')  tElla += a;
-    if (g.payer==='mitad') { tYo += a/2; tElla += a/2; }
+    if (g.payer==='amos')   tAmos   += a;
+    if (g.payer==='angela') tAngela += a;
+    if (g.payer==='mitad')  { tAmos += a/2; tAngela += a/2; }
   }
-  const total = tYo + tElla;
-  return { total, totalYo:tYo, totalElla:tElla,
-           deberiaYo:total*pct, deberiaElla:total*(1-pct),
-           deuda: tYo - total*pct };
+  const total = tAmos + tAngela;
+  // deuda: positivo = Ángela le debe a Amós; negativo = Amós le debe a Ángela
+  const deuda = tAmos - total * pctAmos;
+  return { total, tAmos, tAngela,
+           debAmos: total*pctAmos, debAngela: total*(1-pctAmos), deuda };
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  RENDER
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function render() {
+  if (!whoAmI) return;
   const closed = isClosed();
+
+  // Month title
   document.getElementById('monthTitle').childNodes[0].textContent =
     `${MONTHS_ES[currentMonth]} ${currentYear} `;
   document.getElementById('closedBadge').style.display = closed ? 'inline-block' : 'none';
 
-  document.getElementById('pctYo').textContent    = cfg.pctYo;
-  document.getElementById('pctElla').textContent  = 100-cfg.pctYo;
-  document.getElementById('nameYo').textContent   = cfg.nameYo;
-  document.getElementById('nameElla').textContent = cfg.nameElla;
-  document.getElementById('splitLabel').textContent = `${cfg.pctYo}% · ${100-cfg.pctYo}%`;
-  document.getElementById('splitFill').style.width  = `${cfg.pctYo}%`;
+  // Who chip
+  document.getElementById('whoChip').textContent = myName();
+
+  // Split bar (always Amós left, Ángela right — fixed)
+  document.getElementById('splitLabel').textContent = `${shared.pctAmos}% · ${100-shared.pctAmos}%`;
+  document.getElementById('splitFill').style.width  = `${shared.pctAmos}%`;
 
   const items = currentItems();
   const s     = calcSummary(items);
 
+  // From MY perspective
+  const myTotal    = whoAmI==='amos' ? s.tAmos   : s.tAngela;
+  const otherTotal = whoAmI==='amos' ? s.tAngela : s.tAmos;
+  const myDeb      = whoAmI==='amos' ? s.debAmos : s.debAngela;
+  const otherDeb   = whoAmI==='amos' ? s.debAngela : s.debAmos;
+  // deuda desde mi perspectiva: cuánto me debe la otra persona
+  // si soy Amós: s.deuda positivo = Ángela me debe
+  // si soy Ángela: s.deuda negativo = yo debo a Amós → s.deuda*-1 = lo que yo debo
+  const myDeuda = whoAmI==='amos' ? s.deuda : -s.deuda;
+
   document.getElementById('totalGastado').textContent = fmt(s.total);
   document.getElementById('numGastos').textContent    = `${items.length} gasto${items.length!==1?'s':''}`;
-  document.getElementById('parteYo').textContent      = fmt(s.deberiaYo);
-  document.getElementById('pagoYo').textContent       = `Pagado: ${fmt(s.totalYo)}`;
-  document.getElementById('parteElla').textContent    = fmt(s.deberiaElla);
-  document.getElementById('pagoElla').textContent     = `Pagado: ${fmt(s.totalElla)}`;
+
+  document.getElementById('labelYo').textContent   = `Tu parte (${myPct()}%)`;
+  document.getElementById('labelElla').textContent = `Parte de ${otherName()} (${otherPct()}%)`;
+  document.getElementById('parteYo').textContent   = fmt(myDeb);
+  document.getElementById('pagoYo').textContent    = `Pagado: ${fmt(myTotal)}`;
+  document.getElementById('parteElla').textContent = fmt(otherDeb);
+  document.getElementById('pagoElla').textContent  = `Pagado: ${fmt(otherTotal)}`;
 
   const deudaEl  = document.getElementById('deuda');
   const deudaSub = document.getElementById('deudaSub');
-  if (s.deuda >= 0) {
-    deudaEl.textContent  = fmt(s.deuda);
-    deudaSub.textContent = s.deuda < 0.01 ? 'Al corriente ✓' : `${cfg.nameElla} te debe esta cantidad`;
+  const deudaLbl = document.getElementById('deudaLabel');
+  if (myDeuda >= 0) {
+    deudaLbl.textContent = `${otherName()} te debe`;
+    deudaEl.textContent  = fmt(myDeuda);
+    deudaSub.textContent = myDeuda < 0.01 ? 'Al corriente ✓' : `${otherName()} te debe esta cantidad`;
   } else {
-    deudaEl.textContent  = fmt(Math.abs(s.deuda));
-    deudaSub.textContent = `Tú le debes a ${cfg.nameElla}`;
+    deudaLbl.textContent = `Le debes a ${otherName()}`;
+    deudaEl.textContent  = fmt(Math.abs(myDeuda));
+    deudaSub.textContent = `Tú le debes a ${otherName()}`;
   }
 
   // Close-month bar
@@ -665,18 +756,21 @@ function render() {
       <p><strong>¿Habéis saldado las cuentas?</strong> Cierra el mes para archivarlo.</p>
       <button class="btn-close-month" id="closeMonthBtn">Cerrar mes ✓</button>`;
     document.getElementById('closeMonthBtn').addEventListener('click', () => {
-      if (items.length === 0) { toast('No hay gastos para cerrar'); return; }
-      if (confirm(`¿Cerrar ${MONTHS_ES[currentMonth]} ${currentYear}? Los gastos quedarán archivados.`)) closeMonth();
+      if (items.length===0) { toast('No hay gastos para cerrar'); return; }
+      if (confirm(`¿Cerrar ${MONTHS_ES[currentMonth]} ${currentYear}?`)) closeMonth();
     });
     addSec.style.display = 'block';
   }
+
+  // Default payer = whoAmI
+  document.getElementById('payer').value = whoAmI;
 
   renderFilters(items);
   renderList(items, closed);
 }
 
 function renderFilters(items) {
-  const used = ['todos', ...new Set(items.map(g => g.category))];
+  const used = ['todos', ...new Set(items.map(g=>g.category))];
   const row  = document.getElementById('filterRow');
   row.innerHTML = '';
   for (const cat of used) {
@@ -692,16 +786,16 @@ function renderFilters(items) {
 function renderList(items, closed) {
   const container = document.getElementById('expenseList');
   const filtered  = (activeFilter==='todos' ? items : items.filter(g=>g.category===activeFilter))
-    .slice().sort((a,b) => b.date.localeCompare(a.date));
+    .slice().sort((a,b)=>b.date.localeCompare(a.date));
 
-  if (filtered.length === 0) {
+  if (filtered.length===0) {
     container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div>No hay gastos este mes aún.</div>`;
     return;
   }
   container.innerHTML = filtered.map(g => {
     const catEmoji   = g.category.split(' ')[0];
     const catName    = g.category.split(' ').slice(1).join(' ');
-    const payerLabel = g.payer==='yo' ? cfg.nameYo : g.payer==='ella' ? cfg.nameElla : 'Mitad';
+    const payerLabel = g.payer==='amos' ? 'Amós' : g.payer==='angela' ? 'Ángela' : 'Mitad';
     const p          = g.date.split('-');
     const dateFmt    = new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('es-ES',{day:'2-digit',month:'short'});
     const editBtn    = closed ? '' : `<button class="expense-btn edit-btn" data-id="${g.id}">✏ Editar</button>`;
@@ -734,18 +828,20 @@ function renderList(items, closed) {
 }
 
 function renderHistory() {
-  const keys = Object.keys(db).filter(k => k !== currentKey()).sort((a,b)=>b.localeCompare(a)).slice(0,24);
+  if (!whoAmI) return;
+  const keys = Object.keys(db).filter(k=>k!==currentKey()).sort((a,b)=>b.localeCompare(a)).slice(0,24);
   const section = document.getElementById('historySection');
   const list    = document.getElementById('historyList');
-  if (keys.length === 0) { section.style.display='none'; return; }
+  if (keys.length===0) { section.style.display='none'; return; }
   section.style.display = 'block';
   list.innerHTML = keys.map(k => {
     const [y,m] = k.split('-');
     const data  = getMonthData(k);
     const s     = calcSummary(data.items);
-    const deudaTxt = s.deuda>=0
-      ? `${cfg.nameElla} debía ${fmt(s.deuda)}`
-      : `Tú debías ${fmt(Math.abs(s.deuda))}`;
+    const myD   = whoAmI==='amos' ? s.deuda : -s.deuda;
+    const deudaTxt = myD>=0
+      ? `${otherName()} debía ${fmt(myD)}`
+      : `Debías ${fmt(Math.abs(myD))}`;
     return `
     <div class="history-item" data-key="${k}">
       <div>
@@ -764,12 +860,12 @@ function renderHistory() {
   });
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  EDIT MODAL
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function openEditModal(id) {
   let g = null;
-  for (const key of Object.keys(db)) { g = db[key].items.find(x=>String(x.id)===String(id)); if(g) break; }
+  for (const k of Object.keys(db)) { g=db[k].items.find(x=>String(x.id)===String(id)); if(g) break; }
   if (!g) return;
   document.getElementById('editId').value       = g.id;
   document.getElementById('editDesc').value     = g.desc||'';
@@ -780,93 +876,114 @@ function openEditModal(id) {
   document.getElementById('editModal').classList.add('open');
 }
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  EVENTS
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function bindEvents() {
-  // Lock screen
+  // Lock
   const tryUnlock = () => {
-    const val = document.getElementById('pinInput').value;
-    if (!cfg.passwordHash || simpleHash(val) === cfg.passwordHash) {
+    const v = document.getElementById('pinInput').value;
+    if (simpleHash(v) === shared.passwordHash || !shared.passwordHash) {
       unlock();
     } else {
       document.getElementById('pinError').textContent = 'Contraseña incorrecta';
       document.getElementById('pinInput').value = '';
-      setTimeout(() => document.getElementById('pinError').textContent = '', 2000);
+      setTimeout(()=>document.getElementById('pinError').textContent='', 2000);
     }
   };
   document.getElementById('pinBtn').addEventListener('click', tryUnlock);
-  document.getElementById('pinInput').addEventListener('keydown', e => { if(e.key==='Enter') tryUnlock(); });
+  document.getElementById('pinInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
   document.getElementById('lockBtn').addEventListener('click', lock);
 
+  // Who
+  document.getElementById('whoAmos').addEventListener('click',   ()=>chooseWho('amos'));
+  document.getElementById('whoAngela').addEventListener('click', ()=>chooseWho('angela'));
+
   // Month nav
-  document.getElementById('prevMonth').addEventListener('click', () => {
+  document.getElementById('prevMonth').addEventListener('click', ()=>{
     currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;}
     activeFilter='todos'; render();
   });
-  document.getElementById('nextMonth').addEventListener('click', () => {
+  document.getElementById('nextMonth').addEventListener('click', ()=>{
     currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;}
     activeFilter='todos'; render();
   });
 
-  // Add gasto
-  document.getElementById('addBtn').addEventListener('click', () => {
+  // Add
+  document.getElementById('addBtn').addEventListener('click', ()=>{
     const desc     = document.getElementById('desc').value.trim();
     const amountRaw= document.getElementById('amount').value;
     const date     = document.getElementById('date').value;
     const category = document.getElementById('category').value;
     const payer    = document.getElementById('payer').value;
-    if (!amountRaw || isNaN(parseFloat(amountRaw))) { toast('Introduce un importe válido'); return; }
+    if (!amountRaw||isNaN(parseFloat(amountRaw))) { toast('Introduce un importe válido'); return; }
     if (!date) { toast('Selecciona una fecha'); return; }
     const amount = parseFloat(parseFloat(amountRaw).toFixed(2));
-    addGasto({ id: Date.now()+Math.random(), desc:desc||category, amount, date, category, payer });
+    addGasto({ id:Date.now()+Math.random(), desc:desc||category, amount, date, category, payer });
     const p = date.split('-');
     currentYear=parseInt(p[0]); currentMonth=parseInt(p[1])-1;
-    document.getElementById('desc').value   = '';
-    document.getElementById('amount').value = '';
-    document.getElementById('date').value   = toDateStr(new Date());
+    document.getElementById('desc').value='';
+    document.getElementById('amount').value='';
+    document.getElementById('date').value=toDateStr(new Date());
     render(); renderHistory(); toast('Gasto añadido ✓');
   });
 
-  // Settings open/close
-  const openSettings = () => {
-    document.getElementById('cfgNameYo').value    = cfg.nameYo;
-    document.getElementById('cfgNameElla').value  = cfg.nameElla;
-    document.getElementById('cfgPctYo').value     = cfg.pctYo;
+  // Settings
+  function roundTo5(pct) { return Math.round(pct / 5) * 5; }
+  function calcPctFromSalaries(salAmos, salAngela) {
+    const total = salAmos + salAngela;
+    if (total <= 0) return 60;
+    return Math.min(95, Math.max(5, roundTo5((salAmos / total) * 100)));
+  }
+  function updatePctPreview() {
+    const sA = parseFloat(document.getElementById('cfgSalAmos').value)||0;
+    const sB = parseFloat(document.getElementById('cfgSalAngela').value)||0;
+    if (sA > 0 || sB > 0) {
+      const pA = calcPctFromSalaries(sA, sB);
+      document.getElementById('pctPreview').textContent = `${pA}% · ${100-pA}%`;
+    } else {
+      document.getElementById('pctPreview').textContent = '— % · — %';
+    }
+  }
+  document.getElementById('settingsBtn').addEventListener('click', ()=>{
+    document.getElementById('cfgSalAmos').value   = shared.salAmos||'';
+    document.getElementById('cfgSalAngela').value = shared.salAngela||'';
     document.getElementById('cfgPassword').value  = '';
-    document.getElementById('cfgScriptUrl').value = cfg.scriptUrl;
+    updatePctPreview();
     document.getElementById('settingsModal').classList.add('open');
-  };
-  document.getElementById('settingsBtn').addEventListener('click', openSettings);
-  document.getElementById('setupBannerBtn').addEventListener('click', openSettings);
-  document.getElementById('closeSettings').addEventListener('click', () =>
+  });
+  document.getElementById('cfgSalAmos').addEventListener('input', updatePctPreview);
+  document.getElementById('cfgSalAngela').addEventListener('input', updatePctPreview);
+  document.getElementById('closeSettings').addEventListener('click', ()=>
     document.getElementById('settingsModal').classList.remove('open'));
-  document.getElementById('settingsModal').addEventListener('click', e => {
+  document.getElementById('settingsModal').addEventListener('click', e=>{
     if(e.target===document.getElementById('settingsModal'))
       document.getElementById('settingsModal').classList.remove('open');
   });
-  document.getElementById('saveSettings').addEventListener('click', () => {
-    cfg.nameYo   = document.getElementById('cfgNameYo').value.trim()||'Tú';
-    cfg.nameElla = document.getElementById('cfgNameElla').value.trim()||'Pareja';
-    cfg.pctYo    = Math.max(1,Math.min(99,parseInt(document.getElementById('cfgPctYo').value)||60));
-    cfg.scriptUrl= document.getElementById('cfgScriptUrl').value.trim();
-    const newPass = document.getElementById('cfgPassword').value;
-    if (newPass) cfg.passwordHash = simpleHash(newPass);
+  document.getElementById('saveSettings').addEventListener('click', ()=>{
+    const sA = parseFloat(document.getElementById('cfgSalAmos').value)||0;
+    const sB = parseFloat(document.getElementById('cfgSalAngela').value)||0;
+    if (sA > 0 || sB > 0) {
+      shared.salAmos   = sA;
+      shared.salAngela = sB;
+      shared.pctAmos   = calcPctFromSalaries(sA, sB);
+    }
+    const np = document.getElementById('cfgPassword').value;
+    if (np) shared.passwordHash = simpleHash(np);
     saveLocal();
-    updatePayerOptions();
+    push({ action:'updateShared', shared });
     document.getElementById('settingsModal').classList.remove('open');
-    render(); renderHistory(); toast('Configuración guardada ✓');
-    if (cfg.scriptUrl) { document.getElementById('setupBanner').classList.add('hidden'); syncFromRemote(); }
+    render(); renderHistory(); toast(`Configuración guardada — Amós ${shared.pctAmos}% · Ángela ${100-shared.pctAmos}%`);
   });
 
   // Edit modal
-  document.getElementById('closeEdit').addEventListener('click', () =>
+  document.getElementById('closeEdit').addEventListener('click', ()=>
     document.getElementById('editModal').classList.remove('open'));
-  document.getElementById('editModal').addEventListener('click', e => {
+  document.getElementById('editModal').addEventListener('click', e=>{
     if(e.target===document.getElementById('editModal'))
       document.getElementById('editModal').classList.remove('open');
   });
-  document.getElementById('saveEdit').addEventListener('click', () => {
+  document.getElementById('saveEdit').addEventListener('click', ()=>{
     const id     = document.getElementById('editId').value;
     const amount = parseFloat(document.getElementById('editAmount').value);
     if (isNaN(amount)) { toast('Importe no válido'); return; }
@@ -884,8 +1001,7 @@ function bindEvents() {
 
 function toast(msg) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'), 2800);
 }
 
