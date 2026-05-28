@@ -530,16 +530,16 @@ function launchApp() {
 //  LOCK
 // ══════════════════════════════════════════════
 function checkLock() {
-  if (sessionStorage.getItem('unlocked') === '1') { afterUnlock(); return; }
+  if (localStorage.getItem('unlocked') === '1') { afterUnlock(); return; }
   document.getElementById('lockScreen').classList.add('visible');
 }
 function unlock() {
   document.getElementById('lockScreen').classList.remove('visible');
-  sessionStorage.setItem('unlocked','1');
+  localStorage.setItem('unlocked','1');
   afterUnlock();
 }
 function lock() {
-  sessionStorage.removeItem('unlocked');
+  localStorage.removeItem('unlocked');
   document.getElementById('pinInput').value = '';
   document.getElementById('pinError').textContent = '';
   document.getElementById('lockScreen').classList.add('visible');
@@ -969,11 +969,20 @@ function bindEvents() {
       shared.pctAmos   = calcPctFromSalaries(sA, sB);
     }
     const np = document.getElementById('cfgPassword').value;
-    if (np) shared.passwordHash = simpleHash(np);
+    if (np) {
+      shared.passwordHash = simpleHash(np);
+      localStorage.removeItem('unlocked'); // fuerza re-autenticación en todos
+    }
     saveLocal();
     push({ action:'updateShared', shared });
     document.getElementById('settingsModal').classList.remove('open');
-    render(); renderHistory(); toast(`Configuración guardada — Amós ${shared.pctAmos}% · Ángela ${100-shared.pctAmos}%`);
+    render(); renderHistory();
+    if (np) {
+      toast('Contraseña cambiada — vuelve a identificarte');
+      setTimeout(()=>lock(), 1500);
+    } else {
+      toast(`Configuración guardada — Amós ${shared.pctAmos}% · Ángela ${100-shared.pctAmos}%`);
+    }
   });
 
   // Edit modal
