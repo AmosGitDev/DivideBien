@@ -942,7 +942,7 @@ function bindEvents() {
   function calcPctFromSalaries(salAmos, salAngela) {
     const total = salAmos + salAngela;
     if (total <= 0) return 60;
-    return Math.min(95, Math.max(5, roundTo5((salAmos / total) * 100)));
+    return Math.min(99, Math.max(1, (salAmos / total) * 100));
   }
   function updatePctPreview() {
     const sA = parseFloat(document.getElementById('cfgSalAmos').value)||0;
